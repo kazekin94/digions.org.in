@@ -1,0 +1,3 @@
+Build cluster
+Clone Repo https://github.com/kazekin94/digions.org.in.git
+do - kubectl apply -f cloned-repo/k8s/

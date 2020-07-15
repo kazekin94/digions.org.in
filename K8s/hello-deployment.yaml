@@ -3,16 +3,16 @@ kind: Deployment
 metadata:
   name: nginx-deployment
   labels:
-    app: nginx
+    app: nginx-1.14
 spec:
   replicas: 3
   selector:
     matchLabels:
-      app: nginx
+      app: nginx-1.14
   template:
     metadata:
       labels:
-        app: nginx
+        app: nginx-1.14
     spec:
       containers:
       - name: nginx
