@@ -4,6 +4,8 @@
 
 replicaCount: 2
 
+appName: my-custom-app
+
 versions:
   - name: v1
     podName: nginx
