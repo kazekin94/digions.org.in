@@ -48,16 +48,4 @@ Selector labels
 */}}
 {{- define "dummy.selectorLabels" -}}
 app.kubernetes.io/name: {{ include "dummy.name" . }}
-app.kubernetes.io/instance: {{ .Release.Name }}
-{{- end }}
-
-{{/*
-Create the name of the service account to use
-*/}}
-{{- define "dummy.serviceAccountName" -}}
-{{- if .Values.serviceAccount.create }}
-{{- default (include "dummy.fullname" .) .Values.serviceAccount.name }}
-{{- else }}
-{{- default "default" .Values.serviceAccount.name }}
-{{- end }}
 {{- end }}
