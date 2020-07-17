@@ -1,3 +1,47 @@
+PreRequisiste-
+python3.8
+
+aws cli
+
+kops
+
+kubectl
+
+Set Kops env var 
+    State store name
+    Cluster name
+    Region
+    master Region
+    
+
+Create Route 53 Record Set
+    Add NS entries to parent dns provider(godaddy)
+
 Build cluster
-Clone Repo https://github.com/kazekin94/digions.org.in.git
-do - kubectl apply -f cloned-repo/k8s/
+    kops create cluster --name=$NAME --state=$KOPS_STATE_STORE --zones=us-west-2a,us-west-2b --cloud-labels "Resource=KOPS,NAME=KOPS-ADMIN,Owner=Ankit"
+Set kubectl context
+    kops export kubecfg $NAME
+Clone Repo 
+    git clone https://github.com/kazekin94/digions.org.in.git
+Install application 
+    kubectl apply -f /path/to/k8s/objects
+Helm installation
+    curl 
+    chmod +x get_helm.sh
+    mv
+create helm charts
+    helm create custom-app
+
+etcd sync and object type of etcd
+
+
+Helm installs charts into Kubernetes, creating a new release for each installation.
+
+2) how weigthed distribution will work for different service version ***
+native k8s way
+
+shipper, tool k8s, load distributer
+
+k8s ingress object for weigthed dist?
+
+3) Istio-native integ if nothing works for load dist.
