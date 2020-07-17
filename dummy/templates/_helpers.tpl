@@ -40,6 +40,7 @@ helm.sh/chart: {{ include "dummy.chart" . }}
 {{- if .Chart.AppVersion }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
+{{- end }}
 
 {{/*
 Selector labels
