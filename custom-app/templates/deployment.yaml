@@ -1,37 +1,28 @@
+{{- range .Values.versions }}
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ include "custom-app.fullname" . }}
-  labels:
-    {{- include "custom-app.labels" . | nindent 4 }}
+  labels: {{ .name }}
+    
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      {{- include "custom-app.selectorLabels" . | nindent 6 }}
+      app: {{ .podName }}
   template:
     metadata:
-    {{- with .Values.podAnnotations }}
-      annotations:
-        {{- toYaml . | nindent 8 }}
-    {{- end }}
       labels:
-        {{- include "custom-app.selectorLabels" . | nindent 8 }}
+        app: {{ .podName }}
+        server: {{ .serverName }}
     spec:
       containers:
         - name: {{ .Chart.Name }}
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
-          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          image: "{{ .image.repository }}:{{ .image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .image.pullPolicy }}
           ports:
             - name: http
               containerPort: 80
               protocol: TCP
-          livenessProbe:
-            httpGet:
-              path: /
-              port: http
-          readinessProbe:
-            httpGet:
-              path: /
-              port: http
-         
+{{ end }}
