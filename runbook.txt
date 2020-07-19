@@ -1,47 +1,55 @@
-PreRequisiste-
-python3.8
+1)  Prerequisites-
+    Install python3.7 
+        sudo yum install python3 -y
+    Install aws cli - v1
+        pip3 install --upgrade --user awscli (install using pip3)
+        export PATH=$HOME/.local/bin:$PATH (add cli to path)
+        source ~/.bash_profile (reload current session)
+        aws --version (verify)
+    Install kops
+        download executable - curl -LO https://github.com/kubernetes/kops/releases/download/$(curl -s https://api.github.com/repos/kubernetes/kops/releases/latest | grep tag_name | cut -d '"' -f 4)/kops-darwin-amd64
+        add execute permissions - chmod +x kops-darwin-amd64
+        add to path - sudo mv kops-darwin-amd64 /usr/local/bin/kops
+        verify - kops version
+    Install kubectl
+        download executable - curl -LO https://storage.googleapis.com/kubernetes-release/release/`curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt`/bin/linux/amd64/kubectl
+        add execute permissions - chmod +x ./kubectl
+        add to path - sudo mv ./kubectl /usr/local/bin/kubectl
+        verify - kubectl version --client
+    Install helm
+        download executable - curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3
+        add execute permissions - chmod 700 get_helm.sh
+        execute - ./get_helm.sh
 
-aws cli
+2)  Set Kops env var in $HOME/.bash_profile 
+    KOPS_STATE_STORE=s3://bucket/url
+    NAME=some.dns.ready.cluster.name (digions.org.in)
 
-kops
+3)  Create Route 53 Record Set, same as cluster-name set in NAME
+    Add NS entries to parent dns provider(godaddy-optional)
 
-kubectl
-
-Set Kops env var 
-    State store name
-    Cluster name
-    Region
-    master Region
-    
-
-Create Route 53 Record Set
-    Add NS entries to parent dns provider(godaddy)
-
-Build cluster
+4)  Build cluster
     kops create cluster --name=$NAME --state=$KOPS_STATE_STORE --zones=us-west-2a,us-west-2b --cloud-labels "Resource=KOPS,NAME=KOPS-ADMIN,Owner=Ankit"
-Set kubectl context
+    kops update cluster $NAME --yes
+
+5)  Set kubectl context
     kops export kubecfg $NAME
-Clone Repo 
+
+6)  Clone Repo 
     git clone https://github.com/kazekin94/digions.org.in.git
-Install application 
-    kubectl apply -f /path/to/k8s/objects
-Helm installation
-    curl 
-    chmod +x get_helm.sh
-    mv
-create helm charts
-    helm create custom-app
 
-etcd sync and object type of etcd
+7)  Install application using helm (Assumes repo was cloned in home)
+    helm install --generate-name digions.org.in/dummy/
 
+8)  Verify app object installation
+    kubectl get all (should give 1 dummy srv, 2 dummy deployment, 2 dummy replicaset, 4 dummy pods, 1 configmap)
 
-Helm installs charts into Kubernetes, creating a new release for each installation.
+9)  Verify application versions
+    curl lb-dns-name (running cmd multiple time should result in nginx and apache default pages)
 
-2) how weigthed distribution will work for different service version ***
-native k8s way
+10) Uninstall app
+    helm ls (copy name)
+    helm uninstall name
 
-shipper, tool k8s, load distributer
-
-k8s ingress object for weigthed dist?
-
-3) Istio-native integ if nothing works for load dist.
+11) Tear down cluster
+    kops delete cluster $NAME --yes
