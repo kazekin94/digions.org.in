@@ -22,7 +22,7 @@ spec:
                 - key: type
                   operator: In
                   values:
-                  - amd-compute
+                  - compute
       containers:
       - name: apache
         image: httpd:2.4
