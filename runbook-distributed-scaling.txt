@@ -34,6 +34,7 @@
 5)  Create instance group 
     kops create ig ig-name --name=$NAME(in both worker igs add nodeLables type: someUniqueValueAcrossIgs under spec.nodeLabels.type: compute/amd-compute)
     kops update cluster $NAME --yes
+    aws iam attach-role-policy --role-name ANKIT-SSO-ROLE --policy-arn arn:aws:iam::aws:policy/AdministratorAccess
 
 6)  Set kubectl context
     kops export kubecfg $NAME
@@ -41,7 +42,7 @@
 7)  Clone Repo 
     git clone https://github.com/kazekin94/digions.org.in.git
 
-8)  Install application using helm (Assumes repo was cloned in home)
+8)  Install application using helm (Assumes repo was cloned in home) #This will act as one type of application in customer env
     NOTE-This step will install application on nodes with label type: compute
     helm install --generate-name digions.org.in/dummy/
 
@@ -51,8 +52,9 @@
 10)  Verify application versions
      curl lb-dns-name (running cmd multiple time should result in nginx and apache default pages)
 
-11) Add SQS permissions to master and slave nodes
+11) Add SQS permissions to master and slave nodes #this will act as another type of application in customer env
     aws iam attach-role-policy --role-name nodes/masters.digions.org.in --policy-arn arn:aws:iam::aws:policy/AmazonSQSFullAccess
+    aws iam attach-role-policy --role-name nodes/masters.digions.org.in --policy-arn arn:aws:iam::aws:policy/CloudWatchFullAccess
 
 12) Install aws cw hpa in a new custom-metrics namespace, namespace is created automatically
     kubectl apply -f https://raw.githubusercontent.com/awslabs/k8s-cloudwatch-adapter/master/deploy/adapter.yaml
@@ -71,10 +73,93 @@
 14) Clone AWS sample app in home dir
     git clone https://github.com/awslabs/k8s-cloudwatch-adapter.git
 
+15) Add nodes affinity labels on both producer and consumer
+    cd ~/k8s-cloudwatch-adapter/samples/sqs/deploy/
+    vim consumer-deployment.yaml
+    #under spec.template.spec add 
+    affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                - key: type
+                  operator: In
+                  values:
+                  - amd-compute
+    save and quit
+    vim producer-deployment.yaml
+    #under spec.template.spec add 
+    affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                - key: type
+                  operator: In
+                  values:
+                  - amd-compute
+    save and quit
 
-11) Uninstall app
+17) Add policy to IAM role nodes.digions.org.in
+    {
+        "Version": "2012-10-17",
+        "Statement": [
+            {
+                "Effect": "Allow",
+                "Action": [
+                    "autoscaling:DescribeAutoScalingGroups",
+                    "autoscaling:DescribeAutoScalingInstances",
+                    "autoscaling:DescribeLaunchConfigurations",
+                    "autoscaling:SetDesiredCapacity",
+                    "autoscaling:TerminateInstanceInAutoScalingGroup"
+                ],
+                "Resource": "*"
+            }
+        ]
+    }
+
+18) Copy cluster autoscaler default yaml to a new file in home dir
+    https://github.com/kubernetes/autoscaler/blob/master/cluster-autoscaler/cloudprovider/aws/examples/cluster-autoscaler-multi-asg.yaml
+
+19) Under command tab add correct instance group name and default scaling setup while creation
+    command:
+    - ./cluster-autoscaler
+    - --v=4
+    - --stderrthreshold=info
+    - --cloud-provider=aws
+    - --skip-nodes-with-local-storage=false
+    - --expander=least-waste
+    - --nodes=1:5:nodes.digions.org.in
+    - --nodes=1:7:amd-nodes.digions.org.in
+
+20) Add cert under hostPath
+    hostPath:
+        path: "/etc/ssl/certs/ca-bundle.crt"
+        path: "/etc/ssl/certs/ca-certificates.crt"
+
+21) Apply cluster autoscaler
+    kubectl apply -f <filename>.yaml
+
+22) Apply consumer deployment
+    kubectl apply -f consumer-deployment.yaml
+
+23) Create CRD external metrics
+    kubectl apply -f externalmetric.yaml
+
+24) Deploy hpa
+    kubectl apply -f hpa.yaml 
+
+25) Deploy producer
+    kubectl apply -f producer-deployment.yaml
+    #sqs q helloworld will be created, load will be preoduced in queue
+
+26) watch scale up of pods
+    kubectl get hpa sqs-consumer-scaler -w
+
+
+27) Uninstall app
     helm ls (copy name)
     helm uninstall name
 
-12) Tear down cluster
+28) Tear down cluster
     kops delete cluster $NAME --yes
