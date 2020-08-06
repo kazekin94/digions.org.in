@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ .Release.Name }}-v1
+  name: webserver-v1
   labels:
     app: {{ .Values.deployment.v1Name }}
     version: v1
