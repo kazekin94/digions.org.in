@@ -3,9 +3,11 @@
 # Declare variables to be passed into your template
 favDrink: water
 service:
-  srvType: LoadBalancer
+  srvType: ClusterIP
+  name: webserver
 deployment:
   v1Name: nginx
   v2Name: apache
   podName: webserver
+
 
