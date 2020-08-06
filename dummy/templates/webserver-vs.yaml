@@ -5,6 +5,8 @@ metadata:
 spec:
   hosts:
     - {{ .Values.appName }}-srv
+  gateways: 
+  - {{ .Values.appName }}-gateway
   http:
   - route:
     - destination:
