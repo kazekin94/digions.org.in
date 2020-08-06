@@ -4,6 +4,7 @@ metadata:
   name: {{ .Values.appName }}-deployment-v1
   labels:
     app: {{ .Values.appName }}-v1
+    version: v1
 spec:
   replicas: 2
   selector:

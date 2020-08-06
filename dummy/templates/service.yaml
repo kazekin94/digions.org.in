@@ -1,7 +1,7 @@
 kind: Service
 apiVersion: v1
 metadata:
-  name: {{ .Values.appName }}-srv
+  name: {{ .Values.appName }}
 spec:
   selector:
     app: {{ .Values.appName }}

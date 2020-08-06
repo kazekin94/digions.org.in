@@ -4,16 +4,16 @@ metadata:
   name: {{ .Values.appName }}-vs
 spec:
   hosts:
-    - {{ .Values.appName }}-srv
+  - {{ .Values.appName }}
   gateways: 
   - {{ .Values.appName }}-gateway
   http:
   - route:
     - destination:
-        host: {{ .Values.appName }}-srv
+        host: {{ .Values.appName }}
         subset: v1
       weight: 80
     - destination:
-        host: {{ .Values.appName }}-srv
+        host: {{ .Values.appName }}
         subset: v2
       weight: 20
