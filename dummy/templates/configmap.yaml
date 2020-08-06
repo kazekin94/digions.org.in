@@ -1,7 +1,0 @@
-apiVersion: v1
-kind: ConfigMap
-metadata: 
-  name: {{ .Chart.Name }}-{{ .Chart.Version }}
-data:
-  naam: ankit
-  drink: {{ .Values.favDrink }}

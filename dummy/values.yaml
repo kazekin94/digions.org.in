@@ -1,11 +1,10 @@
 # Default values for dummy.
 # This is a YAML-formatted file.
 # Declare variables to be passed into your template
-favDrink: water
+appName: webserver
 service:
-  srvType: LoadBalancer
+  srvType: ClusterIP
 deployment:
   v1Name: nginx
   v2Name: apache
-  podName: webserver
-
+  
