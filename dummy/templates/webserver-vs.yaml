@@ -12,8 +12,8 @@ spec:
     - destination:
         host: {{ .Values.appName }}-srv
         subset: v1
-    weight: 80
+      weight: 80
     - destination:
         host: {{ .Values.appName }}-srv
         subset: v2
-    weight: 20
+      weight: 20
