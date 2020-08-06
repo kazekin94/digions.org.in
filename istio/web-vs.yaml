@@ -6,7 +6,12 @@ spec:
   hosts:
   - webserver
   http:
-    route:
-    - destination:
+    - route:
+      - destination:
+          host: webserver
+          subset: v1
+        weight: 80
+      - destination:
         host: webserver
-        subset: v1
+        subset: v2
+      weight: 20
