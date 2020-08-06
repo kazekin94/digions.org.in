@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: {{ .Values.appName }}-deployment-v1
   labels:
-    app: {{ .Values.appName }}-v1
+    app: {{ .Values.appName }}
     version: v1
 spec:
   replicas: 2
