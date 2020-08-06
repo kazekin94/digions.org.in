@@ -3,18 +3,18 @@ kind: Deployment
 metadata:
   name: webserver-v1
   labels:
-    app: {{ .Values.deployment.v1Name }}
+    name: webserver
     version: v1
 spec:
   replicas: 2
   selector:
     matchLabels:
-      app: {{ .Values.deployment.podName }}
+      name: webserver
       version: v1
   template:
     metadata:
       labels:
-        app: {{ .Values.deployment.podName }}
+        name: webserver
         version: v1
     spec:
       affinity:
