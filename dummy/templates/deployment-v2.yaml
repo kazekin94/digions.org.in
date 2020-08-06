@@ -1,21 +1,18 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: webserver-v2
+  name: {{ .Release.Name }}-v2
   labels:
-    name: webserver
-    version: v2
+    app: {{ .Values.deployment.v2Name }}
 spec:
   replicas: 2
   selector:
     matchLabels:
-      name: webserver
-      version: v2
+      app: {{ .Values.deployment.podName }}
   template:
     metadata:
       labels:
-        name: webserver
-        version: v2
+        app: {{ .Values.deployment.podName }}
     spec:
       affinity:
         nodeAffinity:
