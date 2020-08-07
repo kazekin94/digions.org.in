@@ -34,7 +34,6 @@
 5)  Create instance group 
     kops create ig ig-name --name=$NAME(in both worker igs add nodeLables type: someUniqueValueAcrossIgs under spec.nodeLabels.type: compute/amd-compute)
     kops update cluster $NAME --yes
-    aws iam attach-role-policy --role-name ANKIT-SSO-ROLE --policy-arn arn:aws:iam::aws:policy/AdministratorAccess
 
 6)  Set kubectl context
     kops export kubecfg $NAME

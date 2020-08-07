@@ -11,4 +11,4 @@ spec:
       name: http
       protocol: HTTP
     hosts:
-    - "webserver.svc.cluster.local"
+    - "webserver-vs.default.svc.cluster.local"
