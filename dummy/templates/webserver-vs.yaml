@@ -4,7 +4,7 @@ metadata:
   name: {{ .Values.appName }}
 spec:
   hosts:
-  - {{ .Values.appName }}.default.svc.cluster.local
+  - *
   gateways: 
   - {{ .Values.appName }}-gateway
   http:

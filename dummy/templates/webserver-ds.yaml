@@ -3,7 +3,7 @@ kind: DestinationRule
 metadata:
   name: {{ .Values.appName }}-dr
 spec:
-  host: {{ .Values.appName }}
+  host: *
   trafficPolicy:
     loadBalancer:
       simple: ROUND_ROBIN
