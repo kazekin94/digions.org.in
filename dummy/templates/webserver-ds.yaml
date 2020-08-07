@@ -1,7 +1,7 @@
 apiVersion: networking.istio.io/v1alpha3
 kind: DestinationRule
 metadata:
-  name: {{ .Values.appName }}
+  name: {{ .Values.appName }}-dr
 spec:
   host: {{ .Values.appName }}
   trafficPolicy:

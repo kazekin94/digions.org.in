@@ -6,7 +6,7 @@ spec:
   hosts:
   - {{ .Values.appName }}
   gateways: 
-  - {{ .Values.appName }}
+  - {{ .Values.appName }}-gateway
   http:
   - route:
     - destination:
