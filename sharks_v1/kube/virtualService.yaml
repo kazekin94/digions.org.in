@@ -11,3 +11,9 @@ spec:
   - route:
     - destination:
         host: nodejs
+        subset: v1
+      weight: 50
+    - destination:
+        host: nodejs
+        subset: v2
+      weight: 50

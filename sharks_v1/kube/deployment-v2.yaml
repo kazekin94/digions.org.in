@@ -1,9 +1,9 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: nodejs-v1
+  name: nodejs-v2
   labels:
-    version: v1
+    version: v2
 spec:
   replicas: 1
   selector:
@@ -13,10 +13,10 @@ spec:
     metadata:
       labels:
         app: nodejs
-        version: v1
+        version: v2
     spec:
       containers:
       - name: nodejs
-        image: kuzuri1194/node-v1
+        image: kuzuri1194/node-v2
         ports:
         - containerPort: 8080
