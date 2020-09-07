@@ -3,7 +3,7 @@
 # Declare variables to be passed into your template
 appName: webserver
 service:
-  srvType: ClusterIP
+  srvType: LoadBalancer
 deployment:
   v1Name: nginx
   v2Name: apache
