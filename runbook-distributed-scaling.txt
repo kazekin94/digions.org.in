@@ -30,6 +30,7 @@
 
 4)  Create cluster
     kops create cluster --name=$NAME --state=$KOPS_STATE_STORE --zones=us-west-2a --cloud-labels "Resource=KOPS,NAME=KOPS-ADMIN,Owner=Ankit"
+    #create cluster dds will give
 
 5)  Create instance group 
     kops create ig ig-name --name=$NAME(in both worker igs add nodeLables type: someUniqueValueAcrossIgs under spec.nodeLabels.type: compute/amd-compute)
@@ -37,6 +38,8 @@
 
 6)  Set kubectl context
     kops export kubecfg $NAME
+    #how jp did for our read only access. 
+    #how they exporeted the conf.
 
 7)  Clone Repo 
     git clone https://github.com/kazekin94/digions.org.in.git
@@ -54,9 +57,12 @@
 11) Add SQS permissions to master and slave nodes #this will act as another type of application in customer env
     aws iam attach-role-policy --role-name nodes/masters.digions.org.in --policy-arn arn:aws:iam::aws:policy/AmazonSQSFullAccess
     aws iam attach-role-policy --role-name nodes/masters.digions.org.in --policy-arn arn:aws:iam::aws:policy/CloudWatchFullAccess
+    #narrow down exact permission sqs, cw
+    #only those permission for each node group which requires it
 
 12) Install aws cw hpa in a new custom-metrics namespace, namespace is created automatically
     kubectl apply -f https://raw.githubusercontent.com/awslabs/k8s-cloudwatch-adapter/master/deploy/adapter.yaml
+    #exposing kube-metrics-server --> metrics to cloudwatch
 
 13) Verify installation 
     kubectl get --raw "/apis/external.metrics.k8s.io/v1beta1" | jq
@@ -103,19 +109,20 @@
     {
         "Version": "2012-10-17",
         "Statement": [
-            {
-                "Effect": "Allow",
-                "Action": [
-                    "autoscaling:DescribeAutoScalingGroups",
-                    "autoscaling:DescribeAutoScalingInstances",
-                    "autoscaling:DescribeLaunchConfigurations",
-                    "autoscaling:SetDesiredCapacity",
-                    "autoscaling:TerminateInstanceInAutoScalingGroup"
-                ],
-                "Resource": "*"
-            }
+                {
+                    "Effect": "Allow",
+                    "Action": [
+                        "autoscaling:DescribeAutoScalingGroups",
+                        "autoscaling:DescribeAutoScalingInstances",
+                        "autoscaling:DescribeLaunchConfigurations",
+                        "autoscaling:SetDesiredCapacity",
+                        "autoscaling:TerminateInstanceInAutoScalingGroup"
+                    ],
+                    "Resource": "*"
+                }
         ]
     }
+    #min x, max 2x, can it go too 3x asg
 
 18) Copy cluster autoscaler default yaml to a new file in home dir
     https://github.com/kubernetes/autoscaler/blob/master/cluster-autoscaler/cloudprovider/aws/examples/cluster-autoscaler-multi-asg.yaml
