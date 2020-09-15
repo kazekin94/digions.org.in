@@ -162,10 +162,17 @@
 26) watch scale up of pods
     kubectl get hpa sqs-consumer-scaler -w
 
+27) Install alb-controller
+    wget https://raw.githubusercontent.com/kubernetes-sigs/aws-alb-ingress-controller/v1.1.8/docs/examples/alb-ingress-controller.yaml
+    edit cluster name --> --cluster-name=clusterName
+    Apply RBAC roles-->
+    kubectl apply -f https://raw.githubusercontent.com/kubernetes-sigs/aws-alb-ingress-controller/v1.1.8/docs/examples/rbac-role.yaml
+    kubectl apply -f digions.org.in/al-ingress-controller/alb-ingress-controller.yaml
 
-27) Uninstall app
+
+28) Uninstall app
     helm ls (copy name)
     helm uninstall name
 
-28) Tear down cluster
+29) Tear down cluster
     kops delete cluster $NAME --yes

@@ -3,8 +3,10 @@
 # Declare variables to be passed into your template
 appName: webserver
 service:
-  srvType: LoadBalancer
+  srvType: NodePort
 deployment:
   v1Name: nginx
   v2Name: apache
+ingress:  
+  certArn: arn:aws:acm:us-west-2:108970575545:certificate/686daf99-2f8b-49ce-aa72-143575739cab
   

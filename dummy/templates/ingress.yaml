@@ -6,6 +6,7 @@ metadata:
     kubernetes.io/ingress.class: alb
     alb.ingress.kubernetes.io/scheme: internet-facing
     alb.ingress.kubernetes.io/tags: Environment=dev,Team=test
+    alb.ingress.kubernetes.io/certificate-arn: {{ .Values.ingress.certArn }}
 spec:
   rules:
     - http:
