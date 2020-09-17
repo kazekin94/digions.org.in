@@ -1,0 +1,78 @@
+KOPS -->
+    Create cluster --> 
+        kops create cluster $NAME \
+            --state $KOPS_STATE_STORE \
+            --zones=us-west-2a,us-west-2b \
+            --master-size t3a.small 
+    Create instance group on-demand -->
+        edit ig nodes(on-demand) to add node labels and taints, so scheduler prefers spot instances to initiate work load
+        -> kops edit ig nodes --name $NAME
+        -> spec.taints: - on-demand=true:PreferNoSchedule
+        -> spec.nodeLabels: on-demand: "true"
+        -> spec.cloudLabels: k8s.io/cluster-autoscaler/enabled: ""
+        -> spec.cloudLabels: k8s.io/cluster-autoscaler/node-template/label: ""
+    Create instance group spot -->
+        create mixed sport ig, has multiple purchase opetion, scheduler priority
+        -> kops create ig spot-mixed-nodes
+        -> spec.nodeLabels: on-demand: "false"
+        -> spec.mixedInstancePolicy: 
+            instances:
+            - t2.medium
+            - t3.medium
+            - t3a.medium
+            onDemandAboveBase: 0
+            onDemandBase: 0
+            spotInstancePools: 3
+        -> spec.cloudLabels: k8s.io/cluster-autoscaler/enabled: ""
+        -> spec.cloudLabels: k8s.io/cluster-autoscaler/node-template/label: ""
+    Update cluster -->
+        -> kops update cluster $NAME --yes
+    Apply multi asg cluster autoscaler, do config changes 
+    1. Add ca policy to nodes/master IAM Role
+    2. Confirm cloudLabels attached to all IGS
+		3. Make changes to spec.template.spec.containers.command
+			command:
+				- ./cluster-autoscaler
+				- --v=4
+				- --stderrthreshold=info
+				- --cloud-provider=aws
+				- --skip-nodes-with-local-storage=false
+				- --expander=least-waste
+				- --nodes=1:7:nodes.demo.cloudchap.cf
+				- --nodes=1:20:spot-mixed-nodes.demo.cloudchap.cf
+		4. Add ca cert path, 
+		5. Apply CA manifest with changes	
+			kubectl apply -f ca-filename.yaml
+    
+
+Prom operator requires 
+    1. Service account 
+    2. ClusterRole(to scrape/alert/* on all namespaces)
+    3. ClusterRole Binding
+    4. Deployment of prometheous operator
+
+
+
+RESOURCES ::==>>
+
+CA IAM policy --> 
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": [
+                "autoscaling:DescribeAutoScalingGroups",
+                "autoscaling:DescribeAutoScalingInstances",
+                "autoscaling:DescribeLaunchConfigurations",
+                "autoscaling:SetDesiredCapacity",
+                "autoscaling:TerminateInstanceInAutoScalingGroup",
+                "autoscaling:DescribeTags",
+                "autoscaling:DescribeLaunchConfigurations",
+                "ec2:DescribeLaunchTemplateVersions" 
+            ],
+            "Resource": ["*"]
+        }
+    ]
+}
+

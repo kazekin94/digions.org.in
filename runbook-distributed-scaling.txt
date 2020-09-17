@@ -29,7 +29,7 @@
     Add NS entries to parent dns provider(godaddy-optional)
 
 4)  Create cluster
-    kops create cluster --name=$NAME --state=$KOPS_STATE_STORE --zones=us-west-2a --cloud-labels "Resource=KOPS,NAME=KOPS-ADMIN,Owner=Ankit"
+    kops create cluster --name=$NAME --state=$KOPS_STATE_STORE --zones=us-west-2a,us-west-2b --cloud-labels "Resource=KOPS,NAME=KOPS-ADMIN,Owner=Ankit"
     #create cluster dds will give
 
 5)  Create instance group 
